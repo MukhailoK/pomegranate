@@ -12,23 +12,38 @@ public class PomegranateImpl {
     //max total = 2_800_000
 
     public static void main(String[] args) {
-        List<Box> boxMap = generateBoxes();
-        System.out.println(getTotalSeedsInAllBoxes(boxMap) >= 400_000
-                && getTotalSeedsInAllBoxes(boxMap) <= 2_800_000);
-        System.out.println(getTotalSeedsInAllBoxes(boxMap));
-        int maxSeedsInOneBox = getMaximumSeedsInOneBox(boxMap);
-        System.out.println(maxSeedsInOneBox);
-        List<String> boxesWithMaximumSeeds = findBoxesWithMaxSeeds(boxMap, maxSeedsInOneBox);
+        List<Box> boxes = generateBoxes();
+        long totalSeedsInAllBoxes = getTotalSeedsInAllBoxes(boxes);
+        int maxSeedsInOneBox = getMaximumSeedsInOneBox(boxes);
+
+        System.out.println("Check if boxes is correctly:");
+        boolean totalSeeds = totalSeedsInAllBoxes >= 400_000
+                && totalSeedsInAllBoxes <= 2_800_000;
+        System.out.println("count seeds in all boxes: " + totalSeeds);
+        boolean countBoxes = boxes.size() >= 100 && boxes.size() <= 200;
+        System.out.println("count boxes: " + countBoxes);
+        boolean countGranates = boxes.stream()
+                .allMatch(p -> p.getGranates().size() >= 10 && p.getGranates().size() <= 20);
+        System.out.println("count granates: " + countGranates);
+        boolean countSeeds = boxes.stream()
+                .allMatch(p -> p.getGranates().stream()
+                        .allMatch(s -> s.getSeeds().size() >= 400 && s.getSeeds().size() <= 700));
+        System.out.println("count seeds: " + countSeeds);
+        System.out.println("=======================");
+        System.out.println("Total seeds in all boxes = " + totalSeedsInAllBoxes);
+        System.out.println("Max seeds in box = " + maxSeedsInOneBox);
+        List<String> boxesWithMaximumSeeds = findBoxesWithMaxSeeds(boxes, maxSeedsInOneBox);
+        System.out.println("Names of boxes with max seeds:");
         boxesWithMaximumSeeds.forEach(System.out::println);
     }
 
     public static List<Box> generateBoxes() {
         Random random = new Random();
 
-        return  IntStream.range(0, random.nextInt(101) + 100)
+        return IntStream.range(0, random.nextInt(101) + 100)
                 .mapToObj(i -> {
                     Box box = new Box();
-                    box.setName("Box" + i);
+                    box.setName("Box #" + i);
 
                     List<Pomegranate> pomegranates = IntStream.range(0, random.nextInt(11) + 10)
                             .mapToObj(j -> {
